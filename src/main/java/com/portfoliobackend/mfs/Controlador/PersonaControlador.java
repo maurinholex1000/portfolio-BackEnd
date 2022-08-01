@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins ="http://localhost:4200")
+@CrossOrigin
 public class PersonaControlador{
     @Autowired IPersonaServicio ipersonaServicio;
     
@@ -49,27 +49,29 @@ public class PersonaControlador{
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("personas/editar/{id}")
-    public Persona editPersona(@PathVariable Long id, @RequestParam("nombre") String nuevoNombre,
-                                                      @RequestParam("apellido") String nuevoApellido,
-                                                      @RequestParam("img") String nuevaImg){
-        Persona persona = ipersonaServicio.findPersona(id);
+    @PutMapping("/personas/editar/{id}")
+    public Persona editPersona(@PathVariable Long id, @RequestBody Persona persona){
+        String nuevoNombre=persona.getNombre();
+        String nuevoApellido=persona.getApellido();
+        String nuevoTitulo=persona.getTitulo();
+        String nuevoDespcripcion=persona.getDespcripcion();
+        String nuevoPortada=persona.getPortada();
+        String nuevoImg=persona.getImg();
+        Persona personanueva=ipersonaServicio.findPersona(id);
+
         
-        persona.setNombre(nuevoNombre);
-        persona.setApellido(nuevoApellido);
-        persona.getImg();
         
-        ipersonaServicio.savePersona(persona);
+        personanueva.setNombre(nuevoNombre);
+        personanueva.setApellido(nuevoApellido);
+        personanueva.setTitulo(nuevoTitulo);
+        personanueva.setDespcripcion(nuevoDespcripcion);
+        personanueva.setPortada(nuevoPortada);
+        personanueva.setImg(nuevoImg);
+        
+        ipersonaServicio.savePersona(personanueva);
         return persona;
         
     }
-    
-    /*@PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/update")
-    public ResponseEntity<Persona> editPersona(@RequestBody Persona persona){
-        Persona updatePersona=ipersonaServicio.;
-        return new ResponseEntity<>(updatePersona,HttpStatus.OK);
-    }*/
     
     @GetMapping("/personas/traer/perfil")
     public Persona findPersona(){
